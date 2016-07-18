@@ -7,13 +7,16 @@ app.get('/', function(req,res){
 });
 
 io.on('connection', function(socket){
-	io.emit('user connected','new user joined');
-
+	var user = 'unknown';
 	socket.on('chat message', function(msg){
 		io.emit('chat message', msg);
 	});
+	socket.on('user connected', function(u){
+		user=u;
+		io.emit('chat message', 'user '+user+' joined');
+	});
 	socket.on('disconnect', function(){
-		io.emit('user disconnected','User left');
+		io.emit('chat message', 'user '+user+' left');
 	});
 });
 

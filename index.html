@@ -13,10 +13,12 @@
       #messages li:nth-child(odd) { background: #eee; }
     </style>
   </head>
-  <body>
+  <body onload="askNick()">
+    <h2 id="nick">Hello new user. Please sign in</h2>
     <ul id="messages"></ul>
     <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+      <input id="m" autocomplete="off" />
+      <button>Send</button>
     </form>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
      <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
@@ -29,13 +31,15 @@
        });
        socket.on('chat message', function(msg){
          $('#messages').append($('<li>').text(msg));
+
        });
-       socket.on('user connected', function(msg){
-         $('#messages').append($('<li>').text(msg));
-       });
-       socket.on('user disconnected', function(msg){
-         $('#messages').append($('<li>').text(msg));
-       });
+       function askNick(){
+         var person = prompt("Please enter your name", "NickName");
+         if (person != null) {
+           $('#nick').html('Hello ' + person)
+           socket.emit('user connected',person);
+         }
+       }
      </script>
 
   </body>
