@@ -17,6 +17,8 @@
   <h2 id="nick">Hello new user. Please sign in</h2>
   <ul id="messages"></ul>
   <p class="content"/>
+  <p class="allusers"/>
+
   <form action="">
     <input id="m" autocomplete="off" />
     <button>Send</button>
@@ -37,27 +39,29 @@
     $('#messages').append($('<li>').text(msg));
   });
 
+  socket.on('allusers', function(u){
+    $('p.allusers').html('Online users : '+u);
+  });
 
-    socket.on('typing', function(u){
-      $('p.content').html(u+' is typing ...');
-    });
+  socket.on('typing', function(u){
+    $('p.content').html(u+' is typing ...');
+  });
 
-    socket.on('nottyping', function(u){
-      if (u.length > 0) {
-        $('p.content').html(u + ' typing...');
-      }else{
-        $('p.content').html('');
-      }
-    });
+  socket.on('nottyping', function(u){
+    if (u.length > 0) {
+      $('p.content').html(u + ' typing...');
+    }else{
+      $('p.content').html('');
+    }
+  });
 
-    $('form').keydown(function(){
-      socket.emit('typing', user);
-    });
+  $('form').keydown(function(){
+    socket.emit('typing', user);
+  });
 
-    $('form').keyup(function(){
-      socket.emit('nottyping', user);
-    });
-
+  $('form').keyup(function(){
+    socket.emit('nottyping', user);
+  });
 
   function askNick(){
     var person = prompt("Please enter your name", "NickName");

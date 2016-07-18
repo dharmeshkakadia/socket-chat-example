@@ -3,6 +3,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var Set = require("collections/set");
 var typingusers = new Set();
+var allusers = new Set();
 
 app.get('/', function(req,res){
 	res.sendFile(__dirname + '/index.html');
@@ -24,11 +25,15 @@ io.on('connection', function(socket){
 	});
 	socket.on('user connected', function(u){
 		user=u;
+		allusers.add(u);
+		socket.broadcast.emit('allusers', allusers);
 		socket.broadcast.emit('chat message', 'user '+user+' joined');
 	});
 	socket.on('disconnect', function(){
-		typingusers.delete(user)
+		typingusers.delete(user);
+		allusers.delete(user);
 		socket.emit('nottyping', user);
+		socket.broadcast.emit('allusers', allusers);
 		socket.broadcast.emit('chat message', 'user '+user+' left');
 	});
 });
