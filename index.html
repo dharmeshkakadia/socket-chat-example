@@ -16,6 +16,7 @@
 <body onload="askNick()">
   <h2 id="nick">Hello new user. Please sign in</h2>
   <ul id="messages"></ul>
+  <p class="content"/>
   <form action="">
     <input id="m" autocomplete="off" />
     <button>Send</button>
@@ -35,6 +36,28 @@
   socket.on('chat message', function(msg){
     $('#messages').append($('<li>').text(msg));
   });
+
+
+    socket.on('typing', function(u){
+      $('p.content').html(u+' is typing ...');
+    });
+
+    socket.on('nottyping', function(u){
+      if (u.length > 0) {
+        $('p.content').html(u + ' typing...');
+      }else{
+        $('p.content').html('');
+      }
+    });
+
+    $('form').keydown(function(){
+      socket.emit('typing', user);
+    });
+
+    $('form').keyup(function(){
+      socket.emit('nottyping', user);
+    });
+
 
   function askNick(){
     var person = prompt("Please enter your name", "NickName");
